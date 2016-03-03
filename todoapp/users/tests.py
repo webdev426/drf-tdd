@@ -1,3 +1,24 @@
 from django.test import TestCase
 
-# Create your tests here.
+from rest_framework.test import APIRequestFactory
+
+from users import views
+
+
+class UserRegistrationAPIViewTestCase(TestCase):
+    factory = APIRequestFactory()
+
+    def test_invalid_password(self):
+        """
+        Test to verify that a post call with invalid passwords returns a 400 status code
+        """
+        user_data = {
+            "username": "testuser",
+            "email": "test@testuser.com",
+            "password1": "password",
+            "password2": "INVALID_PASSWORD"
+        }
+        request = self.factory.post('/api/users/', user_data)
+        view = views.UserRegistrationAPIView.as_view()
+        response = view(request)
+        self.assertEqual(400, response.status_code)
