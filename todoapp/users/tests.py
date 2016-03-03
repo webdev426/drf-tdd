@@ -1,3 +1,4 @@
+import json
 from django.test import TestCase
 
 from rest_framework.test import APIRequestFactory
@@ -15,10 +16,24 @@ class UserRegistrationAPIViewTestCase(TestCase):
         user_data = {
             "username": "testuser",
             "email": "test@testuser.com",
-            "password1": "password",
-            "password2": "INVALID_PASSWORD"
+            "password": "password",
+            "confirm_password": "INVALID_PASSWORD"
         }
         request = self.factory.post('/api/users/', user_data)
         view = views.UserRegistrationAPIView.as_view()
         response = view(request)
         self.assertEqual(400, response.status_code)
+
+    def test_user_registration(self):
+        user_data = {
+            "username": "testuser",
+            "email": "test@testuser.com",
+            "password": "123123",
+            "confirm_password": "123123"
+        }
+        request = self.factory.post('/api/users/', user_data)
+        view = views.UserRegistrationAPIView.as_view()
+        response = view(request)
+        response.render()
+        self.assertEqual(201, response.status_code)
+        self.assertTrue("token" in json.loads(response.content))
