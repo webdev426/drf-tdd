@@ -14,11 +14,14 @@ class UserRegistrationAPIView(CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
+
         user = serializer.instance
         token, created = Token.objects.get_or_create(user=user)
-        serializer.data["token"] = token.key
+        data = serializer.data
+        data["token"] = token.key
+
         headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(data, status=status.HTTP_201_CREATED, headers=headers)
 
     def perform_create(self, serializer):
         super(UserRegistrationAPIView, self).perform_create(serializer)

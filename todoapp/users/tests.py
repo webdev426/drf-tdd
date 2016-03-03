@@ -36,4 +36,5 @@ class UserRegistrationAPIViewTestCase(TestCase):
         response = view(request)
         response.render()
         self.assertEqual(201, response.status_code)
+        print response.content
         self.assertTrue("token" in json.loads(response.content))
