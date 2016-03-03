@@ -1,5 +1,4 @@
 import json
-from django.contrib.auth.models import User
 from django.test import TestCase
 
 from rest_framework.test import APIRequestFactory
@@ -43,6 +42,9 @@ class UserRegistrationAPIViewTestCase(TestCase):
         self.assertTrue("token" in json.loads(response.content))
 
     def test_unique_username_validation(self):
+        """
+        Test to verify that a post call with already exists username
+        """
         user_data_1 = {
             "username": "testuser",
             "email": "test@testuser.com",
