@@ -1,5 +1,7 @@
 import json
+from django.contrib.auth.models import User
 from django.test import TestCase
+from rest_framework.authtoken.models import Token
 
 from rest_framework.test import APIRequestFactory
 
@@ -64,5 +66,28 @@ class UserRegistrationAPIViewTestCase(TestCase):
         }
         request = self.factory.post('/api/users/', user_data_2)
         view = views.UserRegistrationAPIView.as_view()
+        response = view(request)
+        self.assertEqual(400, response.status_code)
+
+
+class UserAuthenticationAPIViewTestCase(TestCase):
+    factory = APIRequestFactory()
+
+    def setUp(self):
+        self.username = "john"
+        self.email = "john@snow.com"
+        self.password = "you_know_nothing"
+        self.user = User.objects.create_user(self.username, self.email, self.password)
+        self.token = Token.objects.create(user=self.user).key
+
+    def test_authentication_without_password(self):
+        request = self.factory.post('/api/authentication/', {"username": "snowman"})
+        view = views.UserAuthenticationAPIView.as_view()
+        response = view(request)
+        self.assertEqual(400, response.status_code)
+
+    def test_authentication_with_wrong_password(self):
+        request = self.factory.post('/api/authentication/', {"username": self.username, "password": "I_know"})
+        view = views.UserAuthenticationAPIView.as_view()
         response = view(request)
         self.assertEqual(400, response.status_code)
