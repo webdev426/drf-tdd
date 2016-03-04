@@ -3,7 +3,8 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from rest_framework.authtoken.models import Token
 
-from rest_framework.test import APIRequestFactory
+from rest_framework.test import APIRequestFactory, force_authenticate
+from rest_framework.test import APIClient
 
 from users import views
 
@@ -101,3 +102,20 @@ class UserLoginAPIViewTestCase(TestCase):
         self.assertTrue("auth_token" in json.loads(response.content))
 
 
+class UserLogoutAPIViewTestCase(TestCase):
+    factory = APIRequestFactory()
+
+    def setUp(self):
+        self.username = "john"
+        self.email = "john@snow.com"
+        self.password = "you_know_nothing"
+        self.user = User.objects.create_user(self.username, self.email, self.password)
+        self.token = Token.objects.create(user=self.user).key
+
+    def test_logout(self):
+        request = self.factory.post('/api/users/logout/')
+        force_authenticate(request, user=self.user)
+        view = views.UserLogoutAPIView.as_view()
+        response = view(request)
+        self.assertEqual(200, response.status_code)
+        self.assertFalse(Token.objects.filter(key=self.token).exists())
