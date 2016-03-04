@@ -1,8 +1,8 @@
 from rest_framework import status
 from rest_framework.authtoken.models import Token
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, GenericAPIView
 from rest_framework.response import Response
-from users.serializers import UserRegistrationSerializer, UserLoginSerializer
+from users.serializers import UserRegistrationSerializer, UserLoginSerializer, UserDetailSerializer, TokenSerializer
 
 
 class UserRegistrationAPIView(CreateAPIView):
@@ -24,7 +24,22 @@ class UserRegistrationAPIView(CreateAPIView):
         return Response(data, status=status.HTTP_201_CREATED, headers=headers)
 
 
-class UserLoginAPIView(CreateAPIView):
+class UserLoginAPIView(GenericAPIView):
     authentication_classes = ()
     permission_classes = ()
     serializer_class = UserLoginSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.user
+            token, _ = Token.objects.get_or_create(user=user)
+            return Response(
+                data=TokenSerializer(token).data,
+                status=status.HTTP_200_OK,
+            )
+        else:
+            return Response(
+                data=serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST,
+            )

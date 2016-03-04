@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import serializers
+from rest_framework.authtoken.models import Token
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
@@ -32,11 +33,30 @@ class UserLoginSerializer(serializers.Serializer):
         'invalid_credentials': _('Unable to login with provided credentials.')
     }
 
+    def __init__(self, *args, **kwargs):
+        super(UserLoginSerializer, self).__init__(*args, **kwargs)
+        self.user = None
+
     def validate(self, attrs):
-        user = authenticate(username=attrs.get("username"), password=attrs.get('password'))
-        if user:
-            if not user.is_active:
+        self.user = authenticate(username=attrs.get("username"), password=attrs.get('password'))
+        if self.user:
+            if not self.user.is_active:
                 raise serializers.ValidationError(self.error_messages['inactive_account'])
             return attrs
         else:
             raise serializers.ValidationError(self.error_messages['invalid_credentials'])
+
+
+class TokenSerializer(serializers.ModelSerializer):
+    auth_token = serializers.CharField(source='key')
+
+    class Meta:
+        model = Token
+        fields = ("auth_token",)
+
+
+class UserDetailSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ("id", "username", "email", "date_joined")
