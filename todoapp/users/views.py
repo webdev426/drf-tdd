@@ -1,7 +1,9 @@
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.generics import CreateAPIView, GenericAPIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from users.serializers import UserRegistrationSerializer, UserLoginSerializer, UserDetailSerializer, TokenSerializer
 
 
@@ -43,3 +45,13 @@ class UserLoginAPIView(GenericAPIView):
                 data=serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+class UserLogoutAPIView(APIView):
+    permission_classes = (
+        IsAuthenticated,
+    )
+
+    def post(self, request):
+        Token.objects.filter(user=request.user).delete()
+        return Response(status=status.HTTP_200_OK)
