@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
-from users.serializers import UserRegistrationSerializer, UserAuthenticationSerializer
+from users.serializers import UserRegistrationSerializer, UserLoginSerializer
 
 
 class UserRegistrationAPIView(CreateAPIView):
@@ -24,7 +24,7 @@ class UserRegistrationAPIView(CreateAPIView):
         return Response(data, status=status.HTTP_201_CREATED, headers=headers)
 
 
-class UserAuthenticationAPIView(CreateAPIView):
+class UserLoginAPIView(CreateAPIView):
     authentication_classes = ()
     permission_classes = ()
-    serializer_class = UserAuthenticationSerializer
+    serializer_class = UserLoginSerializer

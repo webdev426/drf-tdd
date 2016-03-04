@@ -81,13 +81,27 @@ class UserAuthenticationAPIViewTestCase(TestCase):
         self.token = Token.objects.create(user=self.user).key
 
     def test_authentication_without_password(self):
-        request = self.factory.post('/api/authentication/', {"username": "snowman"})
-        view = views.UserAuthenticationAPIView.as_view()
+        request = self.factory.post('/api/users/login/', {"username": "snowman"})
+        view = views.UserLoginAPIView.as_view()
         response = view(request)
+        response.render()
+        print response.content
         self.assertEqual(400, response.status_code)
 
     def test_authentication_with_wrong_password(self):
-        request = self.factory.post('/api/authentication/', {"username": self.username, "password": "I_know"})
-        view = views.UserAuthenticationAPIView.as_view()
+        request = self.factory.post('/api/users/login/', {"username": self.username, "password": "I_know"})
+        view = views.UserLoginAPIView.as_view()
         response = view(request)
+        response.render()
+        print response.content
         self.assertEqual(400, response.status_code)
+
+    def test_authentication_with_valid_data(self):
+        request = self.factory.post('/api/users/login/', {"username": self.username, "password": self.password})
+        view = views.UserLoginAPIView.as_view()
+        response = view(request)
+        response.render()
+        print response.content
+        self.assertEqual(400, response.status_code)
+
+
