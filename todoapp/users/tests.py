@@ -1,16 +1,14 @@
 import json
+
 from django.contrib.auth.models import User
-from django.test import TestCase
+from django.core.urlresolvers import reverse
+
 from rest_framework.authtoken.models import Token
-
-from rest_framework.test import APIRequestFactory, force_authenticate
-from rest_framework.test import APIClient
-
-from users import views
+from rest_framework.test import APITestCase
 
 
-class UserRegistrationAPIViewTestCase(TestCase):
-    factory = APIRequestFactory()
+class UserRegistrationAPIViewTestCase(APITestCase):
+    url = reverse("users:list")
 
     def test_invalid_password(self):
         """
@@ -22,9 +20,7 @@ class UserRegistrationAPIViewTestCase(TestCase):
             "password": "password",
             "confirm_password": "INVALID_PASSWORD"
         }
-        request = self.factory.post('/api/users/', user_data)
-        view = views.UserRegistrationAPIView.as_view()
-        response = view(request)
+        response = self.client.post(self.url, user_data)
         self.assertEqual(400, response.status_code)
 
     def test_user_registration(self):
@@ -37,10 +33,7 @@ class UserRegistrationAPIViewTestCase(TestCase):
             "password": "123123",
             "confirm_password": "123123"
         }
-        request = self.factory.post('/api/users/', user_data)
-        view = views.UserRegistrationAPIView.as_view()
-        response = view(request)
-        response.render()
+        response = self.client.post(self.url, user_data)
         self.assertEqual(201, response.status_code)
         self.assertTrue("token" in json.loads(response.content))
 
@@ -54,9 +47,7 @@ class UserRegistrationAPIViewTestCase(TestCase):
             "password": "123123",
             "confirm_password": "123123"
         }
-        request = self.factory.post('/api/users/', user_data_1)
-        view = views.UserRegistrationAPIView.as_view()
-        response = view(request)
+        response = self.client.post(self.url, user_data_1)
         self.assertEqual(201, response.status_code)
 
         user_data_2 = {
@@ -65,57 +56,45 @@ class UserRegistrationAPIViewTestCase(TestCase):
             "password": "123123",
             "confirm_password": "123123"
         }
-        request = self.factory.post('/api/users/', user_data_2)
-        view = views.UserRegistrationAPIView.as_view()
-        response = view(request)
+        response = self.client.post(self.url, user_data_2)
         self.assertEqual(400, response.status_code)
 
 
-class UserLoginAPIViewTestCase(TestCase):
-    factory = APIRequestFactory()
+class UserLoginAPIViewTestCase(APITestCase):
+    url = reverse("users:login")
 
     def setUp(self):
         self.username = "john"
         self.email = "john@snow.com"
         self.password = "you_know_nothing"
         self.user = User.objects.create_user(self.username, self.email, self.password)
-        self.token = Token.objects.create(user=self.user).key
 
     def test_authentication_without_password(self):
-        request = self.factory.post('/api/users/login/', {"username": "snowman"})
-        view = views.UserLoginAPIView.as_view()
-        response = view(request)
+        response = self.client.post(self.url, {"username": "snowman"})
         self.assertEqual(400, response.status_code)
 
     def test_authentication_with_wrong_password(self):
-        request = self.factory.post('/api/users/login/', {"username": self.username, "password": "I_know"})
-        view = views.UserLoginAPIView.as_view()
-        response = view(request)
+        response = self.client.post(self.url, {"username": self.username, "password": "I_know"})
         self.assertEqual(400, response.status_code)
 
     def test_authentication_with_valid_data(self):
-        request = self.factory.post('/api/users/login/', {"username": self.username, "password": self.password})
-        view = views.UserLoginAPIView.as_view()
-        response = view(request)
-        response.render()
+        response = self.client.post(self.url, {"username": self.username, "password": self.password})
         self.assertEqual(200, response.status_code)
         self.assertTrue("auth_token" in json.loads(response.content))
 
 
-class UserLogoutAPIViewTestCase(TestCase):
-    factory = APIRequestFactory()
+class UserLogoutAPIViewTestCase(APITestCase):
+    url = reverse("users:logout")
 
     def setUp(self):
         self.username = "john"
         self.email = "john@snow.com"
         self.password = "you_know_nothing"
         self.user = User.objects.create_user(self.username, self.email, self.password)
-        self.token = Token.objects.create(user=self.user).key
+        self.token = Token.objects.create(user=self.user)
 
     def test_logout(self):
-        request = self.factory.post('/api/users/logout/')
-        force_authenticate(request, user=self.user)
-        view = views.UserLogoutAPIView.as_view()
-        response = view(request)
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
+        response = self.client.post(self.url)
         self.assertEqual(200, response.status_code)
         self.assertFalse(Token.objects.filter(key=self.token).exists())
