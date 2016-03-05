@@ -14,7 +14,7 @@ An example Django REST framework project for test driven development.
 ####Todos
 
 * **/api/todos/** (Todo create and list endpoint)
-* **/api/todos/<todo-id>/** (Todo retrieve, update and destroy endpoint)
+* **/api/todos/{todo-id}/** (Todo retrieve, update and destroy endpoint)
 
 ##Install 
 
