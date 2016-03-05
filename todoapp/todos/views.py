@@ -1,5 +1,6 @@
+from rest_framework.exceptions import NotAuthenticated
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from rest_framework.response import Response
+
 from todos.models import ToDo
 from todos.serializers import ToDoSerializer
 
@@ -19,14 +20,11 @@ class ToDoDetailAPIView(RetrieveUpdateDestroyAPIView):
     def update(self, request, *args, **kwargs):
         todo = self.get_object()
         if not request.user.id == todo.user.id:
-            return Response(status=401)
+            raise NotAuthenticated()
         return super(ToDoDetailAPIView, self).update(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
         todo = self.get_object()
         if not request.user.id == todo.user.id:
-            return Response(status=401)
+            raise NotAuthenticated()
         return super(ToDoDetailAPIView, self).delete(request, *args, **kwargs)
-
-
-
