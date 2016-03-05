@@ -1,10 +1,9 @@
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.generics import CreateAPIView, GenericAPIView
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from users.serializers import UserRegistrationSerializer, UserLoginSerializer, UserDetailSerializer, TokenSerializer
+from users.serializers import UserRegistrationSerializer, UserLoginSerializer, TokenSerializer
 
 
 class UserRegistrationAPIView(CreateAPIView):
