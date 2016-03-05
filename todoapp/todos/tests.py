@@ -22,18 +22,6 @@ class TodoListCreateAPIViewTestCase(APITestCase):
     def api_authentication(self):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
 
-    def test_user_authorization(self):
-        """
-        Test to verify api authorization work with expected
-        """
-        self.client.credentials()  # remove http authorization header attribute
-        response = self.client.get(self.url)
-        self.assertEqual(401, response.status_code)
-
-        self.api_authentication()  # add http authorization header attribute
-        response = self.client.get(self.url)
-        self.assertEqual(200, response.status_code)
-
     def test_create_todo(self):
         response = self.client.post(self.url, {"name": "Clean the room!"})
         self.assertEqual(201, response.status_code)
@@ -114,4 +102,3 @@ class TodoDetailAPIViewTestCase(APITestCase):
     def test_todo_object_delete(self):
         response = self.client.delete(self.url)
         self.assertEqual(204, response.status_code)
-
