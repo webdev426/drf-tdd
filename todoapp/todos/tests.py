@@ -81,10 +81,10 @@ class TodoDetailAPIViewTestCase(APITestCase):
         new_token = Token.objects.create(user=new_user)
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + new_token.key)
         response = self.client.put(self.url, {"name", "Hacked by new user"})
-        self.assertEqual(405, response.status_code)
+        self.assertEqual(401, response.status_code)
 
     def test_todo_object_update(self):
-        response = self.client.put(self.url, {"name", "Call Dad!"})
+        response = self.client.put(self.url, {"name": "Call Dad!"}, format='json')
         response_data = json.loads(response.content)
         todo = ToDo.objects.get(id=self.todo.id)
         self.assertEqual(response_data.get("name"), todo.name)
