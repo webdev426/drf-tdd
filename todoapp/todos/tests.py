@@ -1,11 +1,13 @@
+import json
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
+from todos.models import ToDo
 
 
-class ToDoListAPIViewTestCase(APITestCase):
+class TodoListCreateAPIViewTestCase(APITestCase):
     url = reverse("todos:list")
 
     def setUp(self):
@@ -30,3 +32,15 @@ class ToDoListAPIViewTestCase(APITestCase):
         self.api_authentication()  # add http authorization header attribute
         response = self.client.get(self.url)
         self.assertEqual(200, response.status_code)
+
+    def test_create_todo(self):
+        response = self.client.post(self.url, {"name": "Clean the room!"})
+        self.assertEqual(201, response.status_code)
+
+    def test_user_todos(self):
+        """
+        Test to verify user todos list
+        """
+        ToDo.objects.create(name="Clean the car!", user=self.user)
+        response = self.client.get(self.url)
+        self.assertTrue(len(json.loads(response.content)) == ToDo.objects.count())

@@ -1,6 +1,6 @@
 from django.conf.urls import url
-from todos.views import TodoListAPIView
+from todos.views import TodoListCreateAPIView
 
 urlpatterns = [
-    url(r'^$', TodoListAPIView.as_view(), name="list"),
+    url(r'^$', TodoListCreateAPIView.as_view(), name="list"),
 ]
