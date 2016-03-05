@@ -22,6 +22,11 @@ class ToDoDetailAPIView(RetrieveUpdateDestroyAPIView):
             return Response(status=401)
         return super(ToDoDetailAPIView, self).update(request, *args, **kwargs)
 
+    def delete(self, request, *args, **kwargs):
+        todo = self.get_object()
+        if not request.user.id == todo.user.id:
+            return Response(status=401)
+        return super(ToDoDetailAPIView, self).delete(request, *args, **kwargs)
 
 
 

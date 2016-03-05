@@ -84,7 +84,21 @@ class TodoDetailAPIViewTestCase(APITestCase):
         self.assertEqual(401, response.status_code)
 
     def test_todo_object_update(self):
-        response = self.client.put(self.url, {"name": "Call Dad!"}, format='json')
+        response = self.client.put(self.url, {"name": "Call Dad!"})
         response_data = json.loads(response.content)
         todo = ToDo.objects.get(id=self.todo.id)
         self.assertEqual(response_data.get("name"), todo.name)
+
+    def test_todo_object_delete_authorization(self):
+        """
+            Test to verify that put call with different user token
+        """
+        new_user = User.objects.create_user("newuser", "new@user.com", "newpass")
+        new_token = Token.objects.create(user=new_user)
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + new_token.key)
+        response = self.client.delete(self.url)
+        self.assertEqual(401, response.status_code)
+
+    def test_todo_object_delete(self):
+        response = self.client.delete(self.url)
+        self.assertEqual(204, response.status_code)
