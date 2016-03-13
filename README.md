@@ -2,6 +2,18 @@
 
 An example Django REST framework project for test driven development.
 
+## Test Case Scenarios
+* Test to verify registration with invalid password.
+* Test to verify registration with already exists username.
+* Test to verify registration with valid datas.
+* Tested API authentication endpoint validations.
+* Tested authenticated user authorization. 
+* Create a todo with API.
+* Update a todo with API.
+* Update a todo with API.
+* Delete a todo with API.
+* Get todo list for a user.
+
 ##API Endpoints
 
 ####Users
