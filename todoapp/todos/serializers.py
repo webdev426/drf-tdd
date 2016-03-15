@@ -1,18 +1,18 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from todos.models import ToDo
+from todos.models import Todo
 
 
-class ToDoUserSerializer(serializers.ModelSerializer):
+class TodoUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
         fields = ("id", "username", "email", "date_joined")
 
 
-class ToDoSerializer(serializers.ModelSerializer):
-    user = ToDoUserSerializer(read_only=True)
+class TodoSerializer(serializers.ModelSerializer):
+    user = TodoUserSerializer(read_only=True)
 
     class Meta:
-        model = ToDo
+        model = Todo
         fields = ("user", "name", "done", "date_created")

@@ -4,8 +4,8 @@ from django.core.urlresolvers import reverse
 
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
-from todos.models import ToDo
-from todos.serializers import ToDoSerializer
+from todos.models import Todo
+from todos.serializers import TodoSerializer
 
 
 class TodoListCreateAPIViewTestCase(APITestCase):
@@ -30,9 +30,9 @@ class TodoListCreateAPIViewTestCase(APITestCase):
         """
         Test to verify user todos list
         """
-        ToDo.objects.create(user=self.user, name="Clean the car!")
+        Todo.objects.create(user=self.user, name="Clean the car!")
         response = self.client.get(self.url)
-        self.assertTrue(len(json.loads(response.content)) == ToDo.objects.count())
+        self.assertTrue(len(json.loads(response.content)) == Todo.objects.count())
 
 
 class TodoDetailAPIViewTestCase(APITestCase):
@@ -42,7 +42,7 @@ class TodoDetailAPIViewTestCase(APITestCase):
         self.email = "john@snow.com"
         self.password = "you_know_nothing"
         self.user = User.objects.create_user(self.username, self.email, self.password)
-        self.todo = ToDo.objects.create(user=self.user, name="Call Mom!")
+        self.todo = Todo.objects.create(user=self.user, name="Call Mom!")
         self.url = reverse("todos:detail", kwargs={"pk": self.todo.pk})
         self.token = Token.objects.create(user=self.user)
         self.api_authentication()
@@ -57,7 +57,7 @@ class TodoDetailAPIViewTestCase(APITestCase):
         response = self.client.get(self.url)
         self.assertEqual(200, response.status_code)
 
-        todo_serializer_data = ToDoSerializer(instance=self.todo).data
+        todo_serializer_data = TodoSerializer(instance=self.todo).data
         response_data = json.loads(response.content)
         self.assertEqual(todo_serializer_data, response_data)
 
@@ -80,13 +80,13 @@ class TodoDetailAPIViewTestCase(APITestCase):
     def test_todo_object_update(self):
         response = self.client.put(self.url, {"name": "Call Dad!"})
         response_data = json.loads(response.content)
-        todo = ToDo.objects.get(id=self.todo.id)
+        todo = Todo.objects.get(id=self.todo.id)
         self.assertEqual(response_data.get("name"), todo.name)
 
     def test_todo_object_partial_update(self):
         response = self.client.patch(self.url, {"done": True})
         response_data = json.loads(response.content)
-        todo = ToDo.objects.get(id=self.todo.id)
+        todo = Todo.objects.get(id=self.todo.id)
         self.assertEqual(response_data.get("done"), todo.done)
 
     def test_todo_object_delete_authorization(self):
