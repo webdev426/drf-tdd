@@ -71,11 +71,11 @@ class TodoDetailAPIViewTestCase(APITestCase):
 
         # HTTP PUT
         response = self.client.put(self.url, {"name", "Hacked by new user"})
-        self.assertEqual(401, response.status_code)
+        self.assertEqual(403, response.status_code)
 
         # HTTP PATCH
         response = self.client.patch(self.url, {"name", "Hacked by new user"})
-        self.assertEqual(401, response.status_code)
+        self.assertEqual(403, response.status_code)
 
     def test_todo_object_update(self):
         response = self.client.put(self.url, {"name": "Call Dad!"})
@@ -97,7 +97,7 @@ class TodoDetailAPIViewTestCase(APITestCase):
         new_token = Token.objects.create(user=new_user)
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + new_token.key)
         response = self.client.delete(self.url)
-        self.assertEqual(401, response.status_code)
+        self.assertEqual(403, response.status_code)
 
     def test_todo_object_delete(self):
         response = self.client.delete(self.url)
