@@ -1,8 +1,8 @@
-# DRF-TDD-Example
+## DRF-TDD-Example
 
 An example Django REST framework project for test driven development.
 
-## Test Case Scenarios
+### Test Case Scenarios
 * Test to verify registration with invalid password.
 * Test to verify registration with already exists username.
 * Test to verify registration with valid datas.
@@ -14,7 +14,7 @@ An example Django REST framework project for test driven development.
 * Delete a todo with API.
 * Get todo list for a user.
 
-##API Endpoints
+###API Endpoints
 
 ####Users
 
@@ -28,11 +28,11 @@ An example Django REST framework project for test driven development.
 * **/api/todos/** (Todo create and list endpoint)
 * **/api/todos/{todo-id}/** (Todo retrieve, update and destroy endpoint)
 
-##Install 
+###Install 
 
     pip install -r requirements.txt
 
-##Usage
+###Usage
 
     python manage.py test
 
