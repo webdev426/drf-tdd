@@ -14,25 +14,25 @@ An example Django REST framework project for test driven development.
 * Delete a todo with API.
 * Get todo list for a user.
 
-###API Endpoints
+### API Endpoints
 
-####Users
+#### Users
 
 * **/api/users/** (User registration endpoint)
 * **/api/users/login/** (User login endpoint)
 * **/api/users/logout/** (User logout endpoint)
 
 
-####Todos
+#### Todos
 
 * **/api/todos/** (Todo create and list endpoint)
 * **/api/todos/{todo-id}/** (Todo retrieve, update and destroy endpoint)
 
-###Install 
+### Install 
 
     pip install -r requirements.txt
 
-###Usage
+### Usage
 
     python manage.py test
 
