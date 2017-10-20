@@ -42,7 +42,9 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
 
     'users',
-    'todos'
+    'todos',
+
+    'django_nose'
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -136,3 +138,11 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# Use nose to run all tests
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+
+# Tell nose to measure coverage on the 'foo' and 'bar' apps
+NOSE_ARGS = [
+    '--with-coverage',
+    '--cover-package=users,todos',
+]
