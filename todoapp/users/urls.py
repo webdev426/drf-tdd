@@ -4,7 +4,7 @@ from users.views import UserRegistrationAPIView, UserLoginAPIView, UserTokenAPIV
 app_name = 'users'
 
 urlpatterns = [
-    path(r'users/', UserRegistrationAPIView.as_view(), name="list"),
-    path(r'users/login/', UserLoginAPIView.as_view(), name="login"),
-    path(r'tokens/<key>/', UserTokenAPIView.as_view(), name="token"),
+    path('users/', UserRegistrationAPIView.as_view(), name="list"),
+    path('users/login/', UserLoginAPIView.as_view(), name="login"),
+    path('tokens/<key>/', UserTokenAPIView.as_view(), name="token"),
 ]
