@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
 from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import serializers
@@ -21,6 +22,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         if attrs.get('password') != attrs.get('confirm_password'):
             raise serializers.ValidationError("Those passwords don't match.")
+        attrs['password'] = make_password(attrs['password'])
         return attrs
 
 
